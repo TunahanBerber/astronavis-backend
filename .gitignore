@@ -1,0 +1,47 @@
+# Çevresel Değişkenler (API anahtarları, gizli bilgiler)
+.env
+
+# macOS Tarafından Oluşturulan Gereksiz Dosyalar
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# iCloud Dosyaları
+*.icloud
+
+# Vercel Yapılandırma ve Önbellek Dosyaları
+.vercel
+
+# Node.js Bağımlılıkları
+node_modules/
+
+# Derleme ve Ön Bellek Dosyaları
+dist/
+out/
+.next/
+.cache/
+
+# Log Dosyaları
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# IDE ve Editör Dosyaları
+.vscode/
+.idea/
+*.code-workspace
