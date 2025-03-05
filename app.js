@@ -7,33 +7,29 @@ const cors = require("cors");
 // Express uygulamasını başlat
 const app = express();
 
-// 🔹 İzin verilen CORS adresleri
-const allowedOrigins = [
-  "https://astronavis.space",
-  "http://localhost:4200",
-  "https://test-astro-navis.vercel.app/",
-];
 
 // 🌍 Middleware'ler
 app.use(express.json()); // JSON verileri işlemek için
 app.use(morgan("tiny")); // HTTP logları için
 
+
+app.use(cors());
 // 🛑 CORS Konfigürasyonu
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.error("❌ Blocked by CORS:", origin);
-        callback(new Error("CORS policy blocked this request"));
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         console.error("❌ Blocked by CORS:", origin);
+//         callback(new Error("CORS policy blocked this request"));
+//       }
+//     },
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
 
 // 📌 .env'den MongoDB bağlantı stringini al
 const connectionString = process.env.CONNECTION_STRING;
