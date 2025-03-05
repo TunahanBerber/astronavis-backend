@@ -8,6 +8,7 @@ const generateText = async (req, res) => {
   try {
     const { prompt } = req.body;
 
+    // Kullanıcıdan gelen prompt kontrolü
     if (!prompt) {
       return res.status(400).json({ error: "Prompt is required" });
     }
@@ -16,30 +17,34 @@ const generateText = async (req, res) => {
     const response = await axios.post(
       "https://api.cohere.ai/v2/chat", // Cohere API URL
       {
-        model: "command-r", // Kullandığınız model
+        model: "command-r", // Kullanılacak model
         messages: [
           {
             role: "user", // Kullanıcı rolü
             content: prompt, // Kullanıcıdan gelen prompt
           },
         ],
-        stream: false, // Streaming özelliğini kapatıyoruz
+        stream: false, // Yanıt akışını kapalı tutuyoruz
       },
       {
         headers: {
-          Authorization: `Bearer ${cohereApiKey}`, // API anahtarını başlıkta ekle
+          Authorization: `Bearer ${cohereApiKey}`, // API Anahtarı
           "Content-Type": "application/json",
         },
       }
     );
 
-    // Cohere'den gelen yanıtı döndürme
+    // Cohere API'den gelen yanıtı işleme
     const generatedText = response.data.message.content[0].text;
 
-    return res.status(200).json({ generatedText: generatedText });
+    // Başarılı yanıt döndürme
+    return res.status(200).json({ generatedText });
   } catch (error) {
-    console.error("Error generating text:", error);
-    return res.status(500).json({ error: "Error generating text" });
+    // Hata yönetimi
+    console.error("Error generating text:", error.message || error);
+    return res.status(500).json({
+      error: error.message || "An error occurred while generating the text.",
+    });
   }
 };
 

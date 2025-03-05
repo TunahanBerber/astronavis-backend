@@ -7,34 +7,34 @@ const cors = require("cors");
 // Express uygulamasını başlat
 const app = express();
 
+// CORS yapılandırması
+const allowedOrigins = [
+  "https://astronavis.space",
+  "http://localhost:4200",
+  "https://test-astro-navis.vercel.app/",
+];
 
-// 🌍 Middleware'ler
-app.use(express.json()); // JSON verileri işlemek için
+app.use(express.json()); // JSON verilerini işlemek için
 app.use(morgan("tiny")); // HTTP logları için
 
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error("❌ Blocked by CORS:", origin);
+        callback(new Error("CORS policy blocked this request"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-app.use(cors());
-// 🛑 CORS Konfigürasyonu
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         console.error("❌ Blocked by CORS:", origin);
-//         callback(new Error("CORS policy blocked this request"));
-//       }
-//     },
-//     credentials: true,
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//   })
-// );
-
-// 📌 .env'den MongoDB bağlantı stringini al
+// MongoDB bağlantısı
 const connectionString = process.env.CONNECTION_STRING;
-
-// 🔗 MongoDB Bağlantısı
 mongoose
   .connect(connectionString, {
     serverSelectionTimeoutMS: 10000, // 10 saniyede bağlanamazsa hata fırlat
@@ -45,25 +45,18 @@ mongoose
     process.exit(1); // Hata varsa sunucuyu durdur
   });
 
-// 🌍 Rotalar (Örnek)
-const apodRoute = require("./src/routes/apodRoute");
-const marsRoverRoute = require("./src/routes/marsRoverRoute");
-const emailRoute = require("./src/routes/emailRoute");
+// Rotalar
 const aiRoutes = require("./src/routes/aiRoute");
 
-// 🌍 API Endpoint'leri
 const api = process.env.API_URL || "/api/v1";
-app.use(`${api}/apod`, apodRoute);
-app.use(`${api}/mars-rover`, marsRoverRoute);
-app.use(`${api}/email`, emailRoute);
-app.use(`${api}/ai`, aiRoutes);
+app.use(`${api}/ai`, aiRoutes); // AI metin üretme endpoint'i
 
-// 📌 Ana Sayfa Route
+// Ana Sayfa Route
 app.get("/", (req, res) => {
   res.send("🚀 Welcome to the AstroNavis Backend!");
 });
 
-// 🚀 Sunucuyu Başlat
+// Sunucuyu Başlat
 const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
