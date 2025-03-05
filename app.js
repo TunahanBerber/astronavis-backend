@@ -4,18 +4,17 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cors = require("cors");
 
-// Express uygulamasını başlat
 const app = express();
 
-// CORS yapılandırması
+// CORS Yapılandırması
 const allowedOrigins = [
   "https://astronavis.space",
   "http://localhost:4200",
   "https://test-astro-navis.vercel.app/",
 ];
 
-app.use(express.json()); // JSON verilerini işlemek için
-app.use(morgan("tiny")); // HTTP logları için
+app.use(express.json());
+app.use(morgan("tiny"));
 
 app.use(
   cors({
@@ -33,23 +32,29 @@ app.use(
   })
 );
 
-// MongoDB bağlantısı
+// MongoDB Bağlantısı
 const connectionString = process.env.CONNECTION_STRING;
 mongoose
   .connect(connectionString, {
-    serverSelectionTimeoutMS: 10000, // 10 saniyede bağlanamazsa hata fırlat
+    serverSelectionTimeoutMS: 10000,
   })
   .then(() => console.log("✅ MongoDB bağlantısı başarılı"))
   .catch((err) => {
     console.error("❌ MongoDB bağlantı hatası:", err);
-    process.exit(1); // Hata varsa sunucuyu durdur
+    process.exit(1);
   });
 
 // Rotalar
 const aiRoutes = require("./src/routes/aiRoute");
+const marsRoverRoutes = require("./src/routes/marsRoverRoute");
+const apodRoutes = require("./src/routes/apodRoute");
 
 const api = process.env.API_URL || "/api/v1";
-app.use(`${api}/ai`, aiRoutes); // AI metin üretme endpoint'i
+
+// Rotaları tanımla
+app.use(`${api}/ai`, aiRoutes); 
+app.use(`${api}/mars-rover`, marsRoverRoutes); 
+app.use(`${api}/apod`, apodRoutes);
 
 // Ana Sayfa Route
 app.get("/", (req, res) => {
