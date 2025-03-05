@@ -3,33 +3,29 @@ const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cors = require("cors");
-const apiKeyMiddleware = require("./src/middleware/apiKeyMiddleware");
 
+// Express uygulamasını başlat
 const app = express();
+
+// 🔹 İzin verilen CORS adresleri
 const allowedOrigins = [
   "https://astronavis.space",
   "http://localhost:4200",
   "https://test-astro-navis.vercel.app/",
 ];
 
-const api = process.env.API_URL || "/api/v1";
+// 🌍 Middleware'ler
+app.use(express.json()); // JSON verileri işlemek için
+app.use(morgan("tiny")); // HTTP logları için
 
-// Middleware
-app.use(express.json());
-app.use(morgan("tiny"));
-
-app.use((req, res, next) => {
-  console.log("Request Origin:", req.headers.origin); // Test için log atalım
-  next();
-});
-
+// 🛑 CORS Konfigürasyonu
 app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        console.error("Blocked by CORS:", origin);
+        console.error("❌ Blocked by CORS:", origin);
         callback(new Error("CORS policy blocked this request"));
       }
     },
@@ -39,31 +35,40 @@ app.use(
   })
 );
 
-// MongoDB Connection
+// 📌 .env'den MongoDB bağlantı stringini al
 const connectionString = process.env.CONNECTION_STRING;
-mongoose
-  .connect(connectionString)
-  .then(() => console.log("MongoDB connected successfully"))
-  .catch((err) => console.error("MongoDB connection error:", err));
 
-// Routes
+// 🔗 MongoDB Bağlantısı
+mongoose
+  .connect(connectionString, {
+    serverSelectionTimeoutMS: 10000, // 10 saniyede bağlanamazsa hata fırlat
+  })
+  .then(() => console.log("✅ MongoDB bağlantısı başarılı"))
+  .catch((err) => {
+    console.error("❌ MongoDB bağlantı hatası:", err);
+    process.exit(1); // Hata varsa sunucuyu durdur
+  });
+
+// 🌍 Rotalar (Örnek)
 const apodRoute = require("./src/routes/apodRoute");
 const marsRoverRoute = require("./src/routes/marsRoverRoute");
 const emailRoute = require("./src/routes/emailRoute");
-const aiRoutes = require("./src/routes/aiRoute"); // AI Route'larını import ediyoruz
+const aiRoutes = require("./src/routes/aiRoute");
 
+// 🌍 API Endpoint'leri
+const api = process.env.API_URL || "/api/v1";
 app.use(`${api}/apod`, apodRoute);
 app.use(`${api}/mars-rover`, marsRoverRoute);
-app.use(`${api}/email`, apiKeyMiddleware, emailRoute); // API KEY MIDDLEWARE KORUMASI
-app.use(`${api}/ai`, aiRoutes); // AI ile ilgili route'ları da ekliyoruz
+app.use(`${api}/email`, emailRoute);
+app.use(`${api}/ai`, aiRoutes);
 
-// Root Route
+// 📌 Ana Sayfa Route
 app.get("/", (req, res) => {
-  res.send("Welcome to the AstroNavis Backend!");
+  res.send("🚀 Welcome to the AstroNavis Backend!");
 });
 
-// Start Server
+// 🚀 Sunucuyu Başlat
 const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });
