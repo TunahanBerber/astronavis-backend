@@ -1,19 +1,21 @@
 require("dotenv").config();
 
 function apiKeyMiddleware(req, res, next) {
-    const apiKey = req.headers["x-api-key"]; 
+  const apiKey = req.headers["x-api-key"];
+  const validApiKey = process.env.API_KEY;
 
-    
-    if (req.method === "GET") {
-        if (apiKey && apiKey === process.env.API_KEY) {
-            next();  ///Doğru ise burada devam edecek middleware mantığı budur zaten.
-        } else {
-            res.status(403).json({ message: "Unauthorized: Invalid API Key" });
-        }
-    } else {
-        // POST, PUT, DELETE vb. isteklerde API anahtarı kontrolü yapma
-        next();  // Diğer istekler için API anahtarı kontrolüne gerek yok
-    }
+  if (!validApiKey) {
+    console.error("❌ API_KEY is not set in environment variables.");
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error: API Key not configured" });
+  }
+
+  if (apiKey && apiKey === validApiKey) {
+    return next();
+  } else {
+    return res.status(403).json({ message: "Unauthorized: Invalid API Key" });
+  }
 }
 
 module.exports = apiKeyMiddleware;

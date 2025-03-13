@@ -1,38 +1,48 @@
-const { Email } = require('../models/emailModel'); // Email modelini içe aktar
+const { Email } = require("../models/emailModel");
 
-// Email'leri al
+// Email'leri getir
 const getEmails = async (req, res) => {
   try {
-    const emails = await Email.find(); // Email koleksiyonundaki tüm verileri al
-    res.status(200).json(emails); // JSON olarak geri döndür
+    const emails = await Email.find();
+    res.status(200).json({ success: true, emails });
   } catch (error) {
-    console.error('Error retrieving emails:', error.message);
-    res.status(500).json({ error: 'Failed to retrieve emails', details: error.message });
+    console.error("❌ Error retrieving emails:", error);
+    res.status(500).json({ success: false, message: "Failed to retrieve emails", error: error.message });
   }
 };
 
-// Yeni email abone et
+// Email formatını doğrulamak için regex
+const isValidEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+// Yeni email aboneliği
 const subscribeEmail = async (req, res) => {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' }); // Email girilmemişse hata mesajı
-  }
-
   try {
-    // Email zaten var mı kontrol et
-    const existingEmail = await Email.findOne({ email });
-    if (existingEmail) {
-      return res.status(409).json({ error: 'This email is already subscribed' }); // Eğer email mevcutsa, hata gönder
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
     }
 
-    // Yeni emaili kaydet
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ success: false, message: "Invalid email format" });
+    }
+
+    // Email'in zaten kayıtlı olup olmadığını kontrol et
+    const existingEmail = await Email.findOne({ email });
+    if (existingEmail) {
+      return res.status(409).json({ success: false, message: "This email is already subscribed" });
+    }
+
+    // Yeni email'i kaydet
     const newEmail = new Email({ email });
     await newEmail.save();
-    res.status(201).json({ message: 'Email subscribed successfully' }); // Başarı mesajı
+
+    res.status(201).json({ success: true, message: "Email subscribed successfully" });
   } catch (error) {
-    console.error('Error subscribing email:', error.message);
-    res.status(500).json({ error: 'Failed to subscribe email', details: error.message });
+    console.error("❌ Error subscribing email:", error);
+    res.status(500).json({ success: false, message: "Failed to subscribe email", error: error.message });
   }
 };
 

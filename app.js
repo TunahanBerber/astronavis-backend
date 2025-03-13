@@ -41,13 +41,13 @@ mongoose
   .then(() => console.log("✅ MongoDB bağlantısı başarılı"))
   .catch((err) => {
     console.error("❌ MongoDB bağlantı hatası:", err);
-    process.exit(1);
   });
 
 // Rotalar
 const aiRoutes = require("./src/routes/aiRoute");
 const marsRoverRoutes = require("./src/routes/marsRoverRoute");
 const apodRoutes = require("./src/routes/apodRoute");
+const emailRoute = require("./src/routes/emailRoute");
 
 const api = process.env.API_URL || "/api/v1";
 
@@ -55,6 +55,7 @@ const api = process.env.API_URL || "/api/v1";
 app.use(`${api}/ai`, aiRoutes); 
 app.use(`${api}/mars-rover`, marsRoverRoutes); 
 app.use(`${api}/apod`, apodRoutes);
+app.use(`${api}/emails`, emailRoute);
 
 // Ana Sayfa Route
 app.get("/", (req, res) => {
