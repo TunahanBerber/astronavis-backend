@@ -1,16 +1,15 @@
 const swaggerJSDoc = require('swagger-jsdoc');
 
-// Swagger yapılandırması
 const options = {
   definition: {
-    openapi: '3.0.0', // OpenAPI sürümü
+    openapi: '3.0.0',
     info: {
-      title: 'AstroNavis Backend API', // Başlık
-      version: '1.0.0', // Sürüm
-      description: 'AstroNavis API Documentation', // Açıklama
+      title: 'AstroNavis Backend API', 
+      version: '1.0.0', 
+      description: 'AstroNavis API Documentation', 
     },
   },
-  apis: ['./src/routes/*.js'], // API dosyalarının yolu (doğru yolu belirtmelisiniz)
+  apis: ['./src/routes/*.js'],
 };
 
 const swaggerSpec = swaggerJSDoc(options);

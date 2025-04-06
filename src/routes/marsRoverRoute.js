@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const marsRoverController = require("../controllers/marsRoverController");
 
 // Mars Rover API örneği
 /**
@@ -23,8 +24,6 @@ const router = express.Router();
  *                   type: string
  *                   example: "Active"
  */
-router.get('/', (req, res) => {
-  res.json({ rover: 'Curiosity', status: 'Active' });
-});
+router.get("/", marsRoverController.getMarsRover);
 
 module.exports = router;
