@@ -3,6 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cors = require("cors");
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 
 const app = express();
 
@@ -11,6 +13,8 @@ const allowedOrigins = [
   "https://astronavis.space",
   "http://localhost:4200",
   "https://test-astro-navis.vercel.app/",
+  "http://localhost:3002",
+  
 ];
 
 app.use(express.json());
@@ -56,6 +60,7 @@ app.use(`${api}/ai`, aiRoutes);
 app.use(`${api}/mars-rover`, marsRoverRoutes); 
 app.use(`${api}/apod`, apodRoutes);
 app.use(`${api}/emails`, emailRoute);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Ana Sayfa Route
 app.get("/", (req, res) => {
@@ -66,4 +71,4 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
-});
+});                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
