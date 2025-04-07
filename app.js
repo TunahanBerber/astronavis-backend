@@ -39,14 +39,13 @@ app.use(
 // MongoDB Bağlantısı
 const connectionString = process.env.CONNECTION_STRING;
 mongoose
-  .connect(connectionString, {
+  .connect(process.env.CONNECTION_STRING, {
     serverSelectionTimeoutMS: 10000,
   })
   .then(() => console.log("✅ MongoDB bağlantısı başarılı"))
   .catch((err) => {
     console.error("❌ MongoDB bağlantı hatası:", err);
   });
-
 // Rotalar
 const aiRoutes = require("./src/routes/aiRoute");
 const marsRoverRoutes = require("./src/routes/marsRoverRoute");
